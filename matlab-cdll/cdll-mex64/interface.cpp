@@ -175,7 +175,7 @@ void __declspec(dllexport) mexFunction(int nlhs, mxArray** plhs, int nrhs, mxArr
 	nlhs	= 1;
 	plhs[0] = mxCreateDoubleMatrix(set.freq_count, set.input_size, mxREAL);
 
-	// alloc everything
+	// alloc temporary buffers (for float conversion and IO)
 	float *flt_input_data	= static_cast<float*>(mxCalloc(set.input_size, sizeof(float)));
 	float *flt_result		= static_cast<float*>(mxCalloc(size_t(set.freq_count) * set.input_size, sizeof(float)));
 	double* in_ptr			= mxGetPr(prhs[P_INPUT_DATA]);
