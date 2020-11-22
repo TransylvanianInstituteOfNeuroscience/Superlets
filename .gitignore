@@ -5,7 +5,7 @@
 *.pch
 
 # VS user settings
-/.vs
+/.vs/
 /matlab-cdll/cdll-mex64/.vs
 
 # Build results
