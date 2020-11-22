@@ -5,16 +5,16 @@
 *.pch
 
 # VS user settings
-.vs
-matlab-cdll/cdll-mex64/.vs
+/.vs
+/matlab-cdll/cdll-mex64/.vs
 
 # Build results
-Debug/
-Release/
-x64/
-matlab-cdll/cdll-mex64/x64
-matlab-cdll/cdll-mex64/Debug
-matlab-cdll/cdll-mex64/Release
+/Debug/
+/Release/
+/x64/
+/matlab-cdll/cdll-mex64/x64
+/matlab-cdll/cdll-mex64/Debug
+/matlab-cdll/cdll-mex64/Release
 
 # Compiled Dynamic libraries
 *.dll
