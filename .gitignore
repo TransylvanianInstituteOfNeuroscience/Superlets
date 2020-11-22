@@ -1,32 +1,26 @@
-# Prerequisites
-*.d
-
 # Compiled Object files
-*.slo
-*.lo
-*.o
 *.obj
 
 # Precompiled Headers
-*.gch
 *.pch
 
+# VS user settings
+.vs/
+matlab-cdll/cdll-mex64/.vs
+
+# Build results
+Debug/
+Release/
+x64/
+matlab-cdll/cdll-mex64/x64
+matlab-cdll/cdll-mex64/Debug
+matlab-cdll/cdll-mex64/Release
+
 # Compiled Dynamic libraries
-*.so
-*.dylib
 *.dll
 
-# Fortran module files
-*.mod
-*.smod
-
 # Compiled Static libraries
-*.lai
-*.la
-*.a
 *.lib
 
 # Executables
 *.exe
-*.out
-*.app
