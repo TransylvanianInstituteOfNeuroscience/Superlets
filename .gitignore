@@ -19,8 +19,5 @@ matlab-cdll/cdll-mex64/Release
 # Compiled Dynamic libraries
 *.dll
 
-# Compiled Static libraries
-*.lib
-
 # Executables
 *.exe
