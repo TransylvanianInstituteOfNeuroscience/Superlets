@@ -1,7 +1,7 @@
 #pragma once
 #include <complex>
 
-#pragma comment(lib, "libfftwf-3.3.7_x64.lib")
+#pragma comment(lib, "libfftw3f-3.lib")
 
 // FFTW MINIMAL INTERFACE
 extern "C"
