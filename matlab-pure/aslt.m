@@ -127,12 +127,12 @@ for i_buf = 1 : Nbuffers
             
             % accumulate the magnitude (times 2 to get the full spectral
             % energy
-            temp = temp .* (2 .* abs(tempcx(bufbegin : bufend)))';
+            temp = temp .* (2 .* abs(tempcx(bufbegin : bufend)) .^ 2)';
         end
         
         % compute the power of the geometric mean
         root = 1 / order_ls(i_freq);
-        temp = (temp .^ root) .^ 2;
+        temp = temp .^ root;
         
         % accumulate the current FOI to the result spectrum
         wtresult(i_freq, :) = wtresult(i_freq, :) + temp;
