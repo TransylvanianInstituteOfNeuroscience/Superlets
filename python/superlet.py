@@ -103,16 +103,17 @@ def multiplicativeSLT(data_arr, samplerate, scales, order_max, order_min=1, c_1=
     # create the complete multiplicative set spanning
     # order_min - order_max
     cycles = c_1 * np.arange(order_min, order_max + 1)
+    order_num = order_max + 1 - order_min # number of different orders
     SL = [MorletSL(c) for c in cycles]
 
     # lowest order
     gmean_spec = cwtSL(data_arr, SL[0], scales, dt)
-    gmean_spec = np.power(gmean_spec, 1 / order_max)
+    gmean_spec = np.power(gmean_spec, 1 / order_num)
 
     for wavelet in SL[1:]:
 
         spec = cwtSL(data_arr, wavelet, scales, dt)
-        gmean_spec *= np.power(spec, 1 / order_max)
+        gmean_spec *= np.power(spec, 1 / order_num)
 
     return gmean_spec
 
@@ -142,7 +143,7 @@ def FASLT(data_arr, samplerate, scales, order_max, order_min=1, c_1=3):
 
     # every scale needs a different exponent
     # for the geometric mean
-    exponents = 1 / orders
+    exponents = 1 / (orders - order_min + 1)
 
     # which frequencies/scales use the same integer orders SL
     order_jumps = np.where(np.diff(orders_int))[0]
@@ -384,8 +385,8 @@ if __name__ == "__main__":
     import matplotlib.pyplot as ppl
 
     fs = 1000  # sampling frequency
-    signal = 3 * gen_superlet_testdata(fs=fs, eps=0)  # 20Hz, 40Hz and 60Hz
-
+    A = 10 # amplitude
+    signal = A * gen_superlet_testdata(fs=fs, eps=0)  # 20Hz, 40Hz and 60Hz
     
     # frequencies of interest in Hz
     foi = np.linspace(1, 100, 50)
@@ -402,18 +403,21 @@ if __name__ == "__main__":
     )
 
     # amplitude scalogram
-    ampls = np.sqrt(np.abs(spec**2))
+    ampls = np.abs(spec)
 
     fig, (ax1, ax2) = ppl.subplots(2, 1,
                                    sharex=True,
-                                   gridspec_kw={"height_ratios": [1, 2.5]},
+                                   gridspec_kw={"height_ratios": [1, 3]},
                                    figsize=(6, 6))
 
     ax1.plot(np.arange(signal.size) / fs, signal, c='cornflowerblue')
     ax1.set_ylabel('signal (a.u.)')
     
     extent = [0, len(signal) / fs, foi[0], foi[-1]]
-    ax2.imshow(ampls, cmap="magma", aspect="auto", extent=extent, origin='lower')
+    im = ax2.imshow(ampls, cmap="magma", aspect="auto", extent=extent, origin='lower')
+    
+    ppl.colorbar(im,ax = ax2, orientation='horizontal',
+                 shrink=0.7, pad=0.2, label='amplitude (a.u.)')
     
     ax2.plot([0, len(signal) / fs], [20, 20], "--", c='0.5')
     ax2.plot([0, len(signal) / fs], [40, 40], "--", c='0.5')
