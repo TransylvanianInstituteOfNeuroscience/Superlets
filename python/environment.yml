@@ -1,0 +1,8 @@
+name: superlet
+channels:
+  - defaults
+dependencies:
+  - python >= 3.6
+  - numpy >= 1.10 
+  - scipy >= 1.4
+  - matplotlib >= 3.3
