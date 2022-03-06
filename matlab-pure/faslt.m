@@ -45,8 +45,6 @@ if (isempty(F))
     error('frequencies not defined'); 
 end
 
-fix(8.2)
-
 % check order parameter and initialize the order used at each frequency. 
 % if empty, go with an order of 1 for each frequency (single wavelet per
 % set)
