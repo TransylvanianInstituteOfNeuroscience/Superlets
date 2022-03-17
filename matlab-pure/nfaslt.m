@@ -10,7 +10,8 @@
 %   frequency of interest, the closest integer order from the order 
 %   interval will be chosen to produce each superlet. A superlet is a set 
 %   of wavelets with the same center frequency but different number of 
-%   cycles.
+%   cycles. NFASLT supports complex input and negative frequency domain 
+%   definitions.
 %
 %   REFERENCE:
 %   
@@ -35,7 +36,8 @@
 %       The sampling frequency in Hz.
 %
 %   > Fi 
-%       A 2x1 vector [lower, upper] containing the frequency interval.
+%       A 2x1 vector [lower, upper] containing the frequency interval. Can
+%       also go into the negative domain.
 %   
 %   > Nf
 %       Number of frequency points in the given interval F.
@@ -45,7 +47,10 @@
 %
 %   > o             
 %       A 2x1 vector [lower, upper] interval of superresolution orders
-%       (optional).
+%       (optional). If the frequency domain contains 0, then the lower
+%       order refers to frequency 0 and the upper order to the positive
+%       (upper) frequency boundry - the order will then mirror around 0
+%       into the negative domain.
 %
 %   > mult          
 %       Specifies the use of multiplicative superresolution
