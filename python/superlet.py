@@ -15,7 +15,7 @@ from scipy.signal import fftconvolve
 def superlet(
     data_arr,
     samplerate,
-    scales,
+    freqs,
     order_max,
     order_min=1,
     c_1=3,
@@ -24,16 +24,16 @@ def superlet(
 
     """
     Performs Superlet Transform (SLT) according to Moca et al. [1]_
-    Both multiplicative SLT and fractional adaptive SLT are available. 
-    The former is recommended for a narrow frequency band of interest, 
-    whereas the  is better suited for the analysis of a broad range 
+    Both multiplicative SLT and fractional adaptive SLT are available.
+    The former is recommended for a narrow frequency band of interest,
+    whereas the  is better suited for the analysis of a broad range
     of frequencies.
 
     A superlet (SL) is a set of Morlet wavelets with increasing number
-    of cycles within the Gaussian envelope. Hence the bandwith 
+    of cycles within the Gaussian envelope. Hence the bandwith
     is constrained more and more with more cycles yielding a sharper
     frequency resolution. Complementary the low cycle numbers will give a
-    high time resolution. The SLT then is the geometric mean 
+    high time resolution. The SLT then is the geometric mean
     of the set of individual wavelet transforms, combining both wide
     and narrow-bandwidth wavelets into a super-resolution estimate.
 
@@ -41,19 +41,17 @@ def superlet(
     ----------
     data_arr : nD :class:`numpy.ndarray`
         Uniformly sampled time-series data
-        The 1st dimension is interpreted as the time axis
+        The 1st axis is interpreted as the time axis
     samplerate : float
         Samplerate of the time-series in Hz
-    scales : 1D :class:`numpy.ndarray`
-        Set of scales to use in wavelet transform. 
-        Note that for the SL Morlet the relationship
-        between scale and frequency simply is s(f) = 1/(2*pi*f)
+    freqs : 1D :class:`numpy.ndarray`
+        Set of frequencies to use for the wavelet transforms in Hz.
         Need to be ordered high to low for `adaptive=True`
     order_max : int
         Maximal order of the superlet set. Controls the maximum
         number of cycles within a SL together
         with the `c_1` parameter: c_max = c_1 * order_max
-    order_min : Minimal order of the superlet set. Controls 
+    order_min : Minimal order of the superlet set. Controls
         the minimal number of cycles within a SL together
         with the `c_1` parameter: c_min = c_1 * order_min
         Note that for admissability reasons c_min should be at least 3!
@@ -64,23 +62,27 @@ def superlet(
     adaptive : bool
         Wether to perform multiplicative SLT or fractional adaptive SLT.
         If set to True, the order of the wavelet set will increase
-        linearly with the frequencies of interest from `order_min` 
+        linearly with the frequencies of interest from `order_min`
         to `order_max`. If set to False the same SL will be used for
         all frequencies.
-    
+
     Returns
     -------
     gmean_spec : :class:`numpy.ndarray`
-        Complex time-frequency representation of the input data. 
+        Complex time-frequency representation of the input data.
         Shape is (len(scales), data_arr.shape[0], data_arr.shape[1]).
 
     Notes
     -----
-    .. [1] Moca, Vasile V., et al. "Time-frequency super-resolution with superlets." 
+    .. [1] Moca, Vasile V., et al. "Time-frequency super-resolution with superlets."
        Nature communications 12.1 (2021): 1-18.
- 
- 
+
+
     """
+
+    # Note that for the SL Morlet the relationship
+    # between scale and frequency simply is s(f) = 1/(2*pi*f)
+    scales = scale_from_period(1 / freqs)
 
     # adaptive SLT
     if adaptive:
@@ -103,7 +105,7 @@ def multiplicativeSLT(data_arr, samplerate, scales, order_max, order_min=1, c_1=
     # create the complete multiplicative set spanning
     # order_min - order_max
     cycles = c_1 * np.arange(order_min, order_max + 1)
-    order_num = order_max + 1 - order_min # number of different orders
+    order_num = order_max + 1 - order_min  # number of different orders
     SL = [MorletSL(c) for c in cycles]
 
     # lowest order
@@ -124,8 +126,8 @@ def FASLT(data_arr, samplerate, scales, order_max, order_min=1, c_1=3):
 
     For non-integer orders fractional SLTs are
     calculated in the interval [order, order+1) via:
-    
-    R(o_f) = R_1 * R_2 * ... * R_i * R_i+1 ** alpha 
+
+    R(o_f) = R_1 * R_2 * ... * R_i * R_i+1 ** alpha
     with o_f = o_i + alpha
     """
 
@@ -180,8 +182,8 @@ def FASLT(data_arr, samplerate, scales, order_max, order_min=1, c_1=3):
 
         # multiply non-fractional next_spec for
         # all remaining scales/frequencies
-        gmean_spec[jump + 1 :] *= np.power(
-            next_spec[jump - last_jump + 1 :].T, exponents[jump + 1 :]
+        gmean_spec[jump + 1:] *= np.power(
+            next_spec[jump - last_jump + 1:].T, exponents[jump + 1:]
         ).T
 
         # go to the next [order, order+1) interval
@@ -190,13 +192,15 @@ def FASLT(data_arr, samplerate, scales, order_max, order_min=1, c_1=3):
     return gmean_spec
 
 
+# --- Morlet Wavelet formulation ---
+
 class MorletSL:
     def __init__(self, c_i=3, k_sd=5):
 
         """ The Morlet formulation according to
         Moca et al. shifts the admissability criterion from
         the central frequency to the number of cycles c_i
-        within the Gaussian envelope which has a constant 
+        within the Gaussian envelope which has a constant
         standard deviation of k_sd.
         """
 
@@ -210,7 +214,7 @@ class MorletSL:
 
         """
         Complext Morlet wavelet in the SL formulation.
-        
+
         Parameters
         ----------
         t : float
@@ -223,7 +227,7 @@ class MorletSL:
         -------
         out : complex
             Value of the Morlet wavelet at the given time
-        
+
         """
 
         ts = t / s
@@ -243,7 +247,7 @@ def fourier_period(scale):
     This is the approximate Morlet fourier period
     as used in the source publication of Moca et al. 2021
 
-    Note that w0 (central frequency) is always 1 in this 
+    Note that w0 (central frequency) is always 1 in this
     Morlet formulation, hence the scales are not compatible
     to the standard Wavelet definitions!
     """
@@ -256,6 +260,8 @@ def scale_from_period(period):
     return period / (2 * np.pi)
 
 
+# --- Continuous Wavelet transform ---
+
 def cwtSL(data, wavelet, scales, dt):
 
     """
@@ -265,13 +271,13 @@ def cwtSL(data, wavelet, scales, dt):
 
     - Morlet support gets adjusted by number of cycles
     - normalisation is with 1/(scale * 4pi)
-    - this way the norm of the spectrum (modulus) 
-      at the corresponding harmonic frequency is the 
+    - this way the norm of the spectrum (modulus)
+      at the corresponding harmonic frequency is the
       harmonic signal's amplitude
 
     Notes
     -----
-    
+
     The time axis is expected to be along the 1st dimension.
     """
 
@@ -301,7 +307,7 @@ def cwtSL(data, wavelet, scales, dt):
 def _get_superlet_support(scale, dt, cycles):
 
     """
-    Effective support for the convolution is here not only 
+    Effective support for the convolution is here not only
     scale but also cycle dependent.
     """
 
@@ -316,13 +322,13 @@ def _get_superlet_support(scale, dt, cycles):
 def compute_adaptive_order(freq, order_min, order_max):
 
     """
-    Computes the superlet order for a given frequency of interest 
-    for the fractional adaptive SLT (FASLT) according to 
+    Computes the superlet order for a given frequency of interest
+    for the fractional adaptive SLT (FASLT) according to
     equation 7 of Moca et al. 2021.
-    
+
     This is a simple linear mapping between the minimal
     and maximal order onto the respective minimal and maximal
-    frequencies. 
+    frequencies.
 
     Note that `freq` should be ordered low to high.
     """
@@ -341,8 +347,7 @@ def compute_adaptive_order(freq, order_min, order_max):
 # Some test data akin to figure 3 of the source publication
 # ---------------------------------------------------------
 
-
-def gen_superlet_testdata(freqs=[20, 40, 60], cycles=11, fs=1000, eps=0):
+def gen_superlet_testdata(freqs, cycles=11, fs=1000, eps=0):
 
     """
     Harmonic superposition of multiple
@@ -357,6 +362,7 @@ def gen_superlet_testdata(freqs=[20, 40, 60], cycles=11, fs=1000, eps=0):
         tvec = np.arange(cycles / freq, step=1 / fs)
 
         harmonic = np.cos(2 * np.pi * freq * tvec)
+        # 10Hz frequency neighbor
         f_neighbor = np.cos(2 * np.pi * (freq + 10) * tvec)
         packet = harmonic + f_neighbor
 
@@ -377,53 +383,3 @@ def gen_superlet_testdata(freqs=[20, 40, 60], cycles=11, fs=1000, eps=0):
         signal = np.random.randn(len(signal)) * eps + signal
 
     return signal
-
-
-if __name__ == "__main__":
-
-    # to get sth for the eyes ;)
-    import matplotlib.pyplot as ppl
-
-    fs = 1000  # sampling frequency
-    A = 10 # amplitude
-    signal = A * gen_superlet_testdata(fs=fs, eps=0)  # 20Hz, 40Hz and 60Hz
-    
-    # frequencies of interest in Hz
-    foi = np.linspace(1, 100, 50)
-    scales = scale_from_period(1 / foi)
-
-    spec = superlet(
-        signal,
-        samplerate=fs,
-        scales=scales,
-        order_max=30,
-        order_min=1,
-        c_1=5,
-        adaptive=True,
-    )
-
-    # amplitude scalogram
-    ampls = np.abs(spec)
-
-    fig, (ax1, ax2) = ppl.subplots(2, 1,
-                                   sharex=True,
-                                   gridspec_kw={"height_ratios": [1, 3]},
-                                   figsize=(6, 6))
-
-    ax1.plot(np.arange(signal.size) / fs, signal, c='cornflowerblue')
-    ax1.set_ylabel('signal (a.u.)')
-    
-    extent = [0, len(signal) / fs, foi[0], foi[-1]]
-    im = ax2.imshow(ampls, cmap="magma", aspect="auto", extent=extent, origin='lower')
-    
-    ppl.colorbar(im,ax = ax2, orientation='horizontal',
-                 shrink=0.7, pad=0.2, label='amplitude (a.u.)')
-    
-    ax2.plot([0, len(signal) / fs], [20, 20], "--", c='0.5')
-    ax2.plot([0, len(signal) / fs], [40, 40], "--", c='0.5')
-    ax2.plot([0, len(signal) / fs], [60, 60], "--", c='0.5')
-    
-    ax2.set_xlabel("time (s)")    
-    ax2.set_ylabel("frequency (Hz)")
-
-    fig.tight_layout()
