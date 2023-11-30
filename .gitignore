@@ -21,3 +21,6 @@
 
 # Executables
 *.exe
+
+# local tests
+superlet_local_test.py

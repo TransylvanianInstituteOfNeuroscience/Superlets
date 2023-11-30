@@ -52,16 +52,30 @@ end
 xSignal = xTrg + xNF + xNT;
 
 fois    = 10:0.5:80;
-srord   = [1, 30];
+srord   = [5, 10];
 time    = linspace(0, N, numel(xSignal)) / 1000 - nPreSpaceS * fs / 1000;
 
 figure;
 subplot(1, 2, 1);
-imagesc(time, fois, aslt(xSignal, fs, fois, 3, srord, 0));
+slt3 = faslt(xSignal, fs, fois, 3, srord, 0);
+imagesc(time, fois, slt3);
 set(gca, 'ydir', 'normal');
 colormap jet;
+% 
+% subplot(1, 2, 2);
+% slt5 = faslt(xSignal, fs, fois, 5, srord, 0);
+% imagesc(time, fois, slt5);
+% set(gca, 'ydir', 'normal');
+% colormap jet;
 
-subplot(1, 2, 2);
-imagesc(time, fois, aslt(xSignal, fs, fois, 5, srord, 0));
-set(gca, 'ydir', 'normal');
-colormap jet;
+slt20 = slt3(find(fois == 20), :);
+slt40 = slt3(find(fois == 40), :);
+slt60 = slt3(find(fois == 60), :);
+
+figure;
+hold on;
+plot(time, slt20);
+plot(time, slt40);
+plot(time, slt60);
+line([time(1), time(end)], [0.5, 0.5], 'color', 'black');
+
