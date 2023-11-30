@@ -15,6 +15,4 @@ Three versions are supplied:
 
 3. Pure Python implementation ([superlet.py](./python/superlet.py))
    - multiplicative and fractional adaptive SLT
-   - needs only minimal dependencies as defined in [environment.yml](./python/environment.yml), available in any basic scientific Python environment
-   - when run as a script from the command line via `python superlet.py` will produce the example output [synthetic_example.png](./python/synthetic_example.png)
    - can be imported as stand-alone module via `from superlet import superlet`

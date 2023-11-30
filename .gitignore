@@ -16,6 +16,10 @@
 /matlab-cdll/cdll-mex64/Debug
 /matlab-cdll/cdll-mex64/Release
 
+# pycache
+**/__pycache__/
+*.pyc
+
 # Compiled Dynamic libraries
 *.dll
 
