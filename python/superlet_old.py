@@ -7,6 +7,12 @@
 # Implementation by Gregor Mönke: github.com/tensionhead
 #
 
+#
+# Note: this is the OLD version of Superlets available on the TINS GitHub page.
+# superlets.py has been updated to contain a class, to be instantiated once for multiple superlet transforms
+# alternatively, the function "superlet" can be used to compute the superlet transform for one single batch of data 
+#
+
 
 import numpy as np
 from scipy.signal import fftconvolve

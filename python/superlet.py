@@ -4,6 +4,11 @@
 #
 # Implementation by Harald Bârzan and Richard Eugen Ardelean
 
+#
+# Note: for runs on multiple batches of data, the class SuperletTransform can be instantiated just once
+# this saves time and memory allocation for the wavelets and buffers
+#
+
 
 import numpy as np
 from scipy.signal import fftconvolve
