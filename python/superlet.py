@@ -29,7 +29,7 @@ def computeWaveletSize(fc, nc, fs):
         nc - number of cycles
         fs - sampling rate in Hz
     """
-    sd = (nc / 2) * (1 / fc) / MORLET_SD_FACTOR
+    sd = (nc / 2) * (1 / np.abs(fc)) / MORLET_SD_FACTOR
     return int(2 * np.floor(np.round(sd * fs * MORLET_SD_SPREAD) / 2) + 1)
 
 
@@ -124,6 +124,7 @@ class SuperletTransform:
                 # create morlet wavelet
                 self.superlets[iFreq].append(morlet(centerFreq, (iWave + 1) * baseCycles, samplingRate))
 
+
     def __del__(self):
         """
         Destructor.
@@ -148,14 +149,16 @@ class SuperletTransform:
     def transform(self, inputData):
         """
         Apply the transform to a buffer or list of buffers.
+        Arguments:
+            inputData - an NDarray of input data
         """
 
         # compute number of arrays to transform
         if len(inputData.shape) == 1:
-            if inputData.shape[0] < self.inputSize:
+            if inputData.shape[0] != self.inputSize:
                 raise "Input data must meet the defined input size for this transform."
             
-            result = np.zeros((self.inputSize, len(self.frequencies)))
+            result = np.zeros((self.inputSize, len(self.frequencies)), dtype=np.float64)
             self.transformOne(inputData, result)
             return result
 
@@ -163,14 +166,12 @@ class SuperletTransform:
             n       = int(np.sum(inputData.shape[0:len(inputData.shape) - 1]))
             insize  = int(inputData.shape[len(inputData.shape) - 1])
 
-            print(n)
-
             if insize != self.inputSize:
                 raise "Input data must meet the defined input size for this transform."
             
             # reshape to data list
             datalist = np.reshape(inputData, (n, insize), 'C')
-            result = np.zeros((self.inputSize, len(self.frequencies)))
+            result = np.zeros((len(self.frequencies), self.inputSize), dtype=np.float64)
 
             for i in range(0, n):
                 self.transformOne(datalist[i, :], result)
@@ -180,7 +181,10 @@ class SuperletTransform:
 
     def transformOne(self, inputData, accumulator):
         """
-        mata
+        Apply the superlet transform on a single data buffer.
+        Arguments:
+            inputData: A 1xInputSize array containing the signal to be transformed.
+            accumulator: a spectrum to accumulate the resulting superlet transform
         """
         accumulator.resize((len(self.frequencies), self.inputSize))
 
