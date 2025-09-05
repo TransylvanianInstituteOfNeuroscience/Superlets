@@ -75,10 +75,10 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Program Files\MATLAB\R2018b\extern\include;..\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>c:\Users\z5439673\OneDrive - UNSW\Documents\fftw-3.3.5-dll64;c:\Program Files\MATLAB\R2022b\extern\lib\win64\microsoft;c:\Program Files\MATLAB\R2022b\extern\include;..\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\lib;c:\Program Files\MATLAB\R2022b\extern\include;c:\Program Files\MATLAB\R2022b\extern\lib\win64\microsoft;c:\Users\z5439673\OneDrive - UNSW\Documents\fftw-3.3.5-dll64;$(LibraryPath)</LibraryPath>
     <TargetExt>.mexw64</TargetExt>
-    <TargetName>faslt</TargetName>
+    <TargetName>faslt_mex</TargetName>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -87,10 +87,10 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Program Files\MATLAB\R2018b\extern\include;..\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>c:\Users\z5439673\OneDrive - UNSW\Documents\fftw-3.3.5-dll64;c:\Program Files\MATLAB\R2022b\extern\lib\win64\microsoft;c:\Program Files\MATLAB\R2023a\extern\lib\win64\microsoft;c:\Program Files\MATLAB\R2022b\extern\include;c:\Program Files\MATLAB\R2023a\extern\include;..\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\lib;c:\Program Files\MATLAB\R2022b\extern\include;c:\Program Files\MATLAB\R2023a\extern\include;c:\Program Files\MATLAB\R2022b\extern\lib\win64\microsoft;c:\Program Files\MATLAB\R2023a\extern\lib\win64\microsoft;c:\Users\z5439673\OneDrive - UNSW\Documents\fftw-3.3.5-dll64;$(LibraryPath)</LibraryPath>
     <TargetExt>.mexw64</TargetExt>
-    <TargetName>faslt</TargetName>
+    <TargetName>faslt_mex</TargetName>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -111,6 +111,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <Optimization>MaxSpeed</Optimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -118,6 +125,7 @@
       <AdditionalLibraryDirectories>D:\Lab software\MATLAB\extern\lib\win64\microsoft</AdditionalLibraryDirectories>
       <AdditionalDependencies>libmex.lib;libmx.lib;libmat.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/export:mexFunction %(AdditionalOptions)</AdditionalOptions>
+      <LinkTimeCodeGeneration>UseFastLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -146,19 +154,21 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\Lab software\MATLAB\extern\lib\win64\microsoft</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files\MATLAB\R2022b\extern\lib\win64\microsoft;C:\Program Files\MATLAB\R2023a\extern\lib\win64\microsoft</AdditionalLibraryDirectories>
       <AdditionalDependencies>libmex.lib;libmx.lib;libmat.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/export:mexFunction %(AdditionalOptions)</AdditionalOptions>
+      <LinkTimeCodeGeneration>UseFastLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
-    <PostBuildEvent>
-      <Command>copy "$(SolutionDir)$(Platform)\$(Configuration)\$(TargetName).mexw64" "$(SolutionDir)..\prebuilt\$(TargetName).mexw64"</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="convolver.h" />
